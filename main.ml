@@ -18,12 +18,12 @@ let assertListEquals actual expectation msg =
   then ()
   else fail msg
 
-let rec last list = match list with
+let rec last = function
   | [] -> None
   | head :: [] -> Some head
   | head :: tail -> (last [@tailcall]) tail
 
-let rec last_two list = match list with
+let rec last_two = function
   | [] -> None
   | [_] -> None
   | [a; b] -> Some (a, b)
