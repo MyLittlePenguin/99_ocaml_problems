@@ -21,20 +21,20 @@ let assertListEquals actual expectation msg =
 let rec last list = match list with
   | [] -> None
   | head :: [] -> Some head
-  | head :: tail -> last tail
+  | head :: tail -> (last [@tailcall]) tail
 
 let rec last_two list = match list with
   | [] -> None
   | [_] -> None
   | [a; b] -> Some (a, b)
-  | _ :: b -> last_two b
+  | _ :: b -> (last_two [@tailcall]) b
 
 let rec at i list = 
   match i, list with
   | 0, [a] -> Some a
   | 0, head :: tail -> Some head
   | j, [] -> None
-  | j, head :: tail -> if j > 0 then at (j - 1) tail else None
+  | j, head :: tail -> if j > 0 then (at [@tailcall]) (j - 1) tail else None
 
 let () = 
   let _ = assertOptionalEquals (last ["a" ; "b" ; "c" ; "d"]) (Some "d") "should have been d" in
