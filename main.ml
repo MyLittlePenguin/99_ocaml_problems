@@ -37,10 +37,10 @@ let rec at i list =
   | j, head :: tail -> if j > 0 then (at [@tailcall]) (j - 1) tail else None
 
 let () =
-  let _ = assertOptionalEquals (last ["a" ; "b" ; "c" ; "d"]) (Some "d") "should have been d" in
-  let _ = assertOptionalEquals (last []) (None) "should have been d" in
-  let _ = assertOptionalEquals (last_two ["a"; "b"; "c"; "d"]) (Some ("c", "d")) "should have been (c, d)" in
-  let _ = assertOptionalEquals (last_two ["a"]) (None) "should have been (c, d)" in
-  let _ = assertOptionalEquals (at 2 ["a"; "b"; "c"; "d"; "e"]) (Some "c") "should have been c" in
-  let _ = assertOptionalEquals (at 2 ["a"]) (None) "should have been None" in
+  assertOptionalEquals (last ["a" ; "b" ; "c" ; "d"]) (Some "d") "should have been d";
+  assertOptionalEquals (last []) (None) "should have been d";
+  assertOptionalEquals (last_two ["a"; "b"; "c"; "d"]) (Some ("c", "d")) "should have been (c, d)";
+  assertOptionalEquals (last_two ["a"]) (None) "should have been (c, d)";
+  assertOptionalEquals (at 2 ["a"; "b"; "c"; "d"; "e"]) (Some "c") "should have been c";
+  assertOptionalEquals (at 2 ["a"]) (None) "should have been None";
   print_endline "success =)"
