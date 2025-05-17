@@ -9,13 +9,23 @@ let assert_fn (fn: 'a -> 'b -> bool ) a b msg =
   then ()
   else fail msg
 
-let assert_equals a b msg = assert_fn eq a b msg
+let assert_equals (fn: 'a -> string) a b txt =
+  let a = fn a in
+  let b = fn b in
+  assert_fn eq a b (txt ^ ": " ^ a ^ " <> " ^ b)
+
+(* let assert_equals a b msg = assert_fn eq a b msg *)
 
 let list_to_string list =
   let rec aux acc = function
     | [] -> acc ^ "]"
+    | a :: [] -> acc ^ a ^ "]"
     | a :: b -> aux (acc ^ a ^ "; ") b
   in aux "[" list
+
+(* list of list of strings *)
+let lolos_to_string list =
+  list |> (List.map list_to_string) |> list_to_string
 
 (* let assert_optional_equals = function *)
 let assert_optional_equals actual expectation msg =
@@ -94,6 +104,17 @@ let rec compress list =
   | a :: [] -> [a]
   | [] -> []
 
+(* 9. *)
+let pack list =
+  let rec aux acc group list =
+    match group, list with
+    | [], [] -> []
+    | [], hd :: tl -> (aux [@tailcall]) acc [hd] tl
+    | ga :: _, hd :: tl when ga = hd -> (aux [@tailcall]) acc (hd :: group) tl
+    | ga :: _, hd :: tl -> (aux [@tailcall]) (group :: acc) [hd] tl
+    | _, [] -> (group :: acc) |> rev
+  in aux [] [] list
+
 let () =
   assert_optional_equals (last ["a" ; "b" ; "c" ; "d"]) (Some "d") "should have been d";
   assert_optional_equals (last []) (None) "should have been d";
@@ -101,17 +122,23 @@ let () =
   assert_optional_equals (last_two ["a"]) (None) "should have been (c, d)";
   assert_optional_equals (at 2 ["a"; "b"; "c"; "d"; "e"]) (Some "c") "should have been c";
   assert_optional_equals (at 2 ["a"]) (None) "should have been None";
-  assert_equals (length ["a"; "b"; "c"]) 3 "should have been 3";
-  assert_equals (length []) 0 "should have been 0";
-  assert_equals (rev ["a"; "b"; "c"]) ["c"; "b"; "a"] "should have been [c; b; a]";
-  assert_equals (is_palindrome ["x"; "a"; "m"; "a"; "x"]) true "should have been true";
-  assert_equals (is_palindrome ["a"; "b"]) false "should have been false";
-  assert_equals
+  (* assert_equals (length ["a"; "b"; "c"]) 3 "should have been 3"; *)
+  assert_equals Int.to_string (length ["a"; "b"; "c"]) 3 "length";
+  assert_equals Int.to_string (length []) 0 "length";
+  assert_equals list_to_string (rev ["a"; "b"; "c"]) ["c"; "b"; "a"] "rev";
+  assert_equals Bool.to_string (is_palindrome ["x"; "a"; "m"; "a"; "x"]) true "is_palindrome";
+  assert_equals Bool.to_string (is_palindrome ["a"; "b"]) false "is_palindrome";
+  assert_equals list_to_string
     (flatten [One "a"; Many [One "b"; Many [One "c" ;One "d"]; One "e"]])
     ["a"; "b"; "c"; "d"; "e"]
-    "should have been ['a'; 'b'; 'c'; 'd'; 'e']";
-  assert_equals
+    "flatten";
+  assert_equals list_to_string
     (compress ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"])
     ["a"; "b"; "c"; "a"; "d"; "e"]
-    "should have been [a; b; c; a; d; e]";
+    "compress";
+  assert_equals lolos_to_string
+    (pack ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "d"; "e"; "e"; "e"; "e"])
+    [["a"; "a"; "a"; "a"]; ["b"]; ["c"; "c"]; ["a"; "a"]; ["d"; "d"]; ["e"; "e"; "e"; "e"]]
+    "compress";
+    (* "not packed correctly"; *)
   print_endline "success =)"
