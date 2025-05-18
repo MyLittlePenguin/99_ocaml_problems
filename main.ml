@@ -107,7 +107,8 @@ let flatten tree =
 (* 8. *)
 let rec compress list =
   match list with
-  | a :: (b :: _ as tail) -> if a = b then compress tail else a :: (compress tail)
+  | a :: (b :: _ as tail) when a = b -> compress tail
+  | a :: (b :: _ as tail) -> a :: (compress tail)
   | a :: [] -> [a]
   | [] -> []
 
@@ -144,7 +145,6 @@ let () =
     "last_two";
   assert_equals oos_to_string (at 2 ["a"; "b"; "c"; "d"; "e"]) (Some "c") "at";
   assert_equals oos_to_string (at 2 ["a"]) (None) "at";
-  (* assert_equals (length ["a"; "b"; "c"]) 3 "should have been 3"; *)
   assert_equals Int.to_string (length ["a"; "b"; "c"]) 3 "length";
   assert_equals Int.to_string (length []) 0 "length";
   assert_equals los_to_string (rev ["a"; "b"; "c"]) ["c"; "b"; "a"] "rev";
@@ -162,7 +162,6 @@ let () =
     (pack ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "d"; "e"; "e"; "e"; "e"])
     [["a"; "a"; "a"; "a"]; ["b"]; ["c"; "c"]; ["a"; "a"]; ["d"; "d"]; ["e"; "e"; "e"; "e"]]
     "compress";
-    (* "not packed correctly"; *)
   assert_equals
     (l_to_string (fun (a, b) -> "("^(Int.to_string a)^","^b^")"))
     (encode ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"])
