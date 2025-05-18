@@ -100,19 +100,17 @@ let flatten tree =
 (* 8. *)
 let rec compress list =
   match list with
-  | a :: b :: tail -> if a = b then compress (a :: tail) else a :: (compress (b :: tail))
+  | a :: (b :: _ as tail) -> if a = b then compress tail else a :: (compress tail)
   | a :: [] -> [a]
   | [] -> []
 
 (* 9. *)
 let pack list =
-  let rec aux acc group list =
-    match group, list with
-    | [], [] -> []
-    | [], hd :: tl -> (aux [@tailcall]) acc [hd] tl
-    | ga :: _, hd :: tl when ga = hd -> (aux [@tailcall]) acc (hd :: group) tl
-    | ga :: _, hd :: tl -> (aux [@tailcall]) (group :: acc) [hd] tl
-    | _, [] -> (group :: acc) |> rev
+  let rec aux acc group = function
+    | [] -> []
+    | [a] -> (a :: group) :: acc |> rev
+    | a :: (b :: _ as tail) when a = b -> (aux [@tailcall]) acc (a :: group) tail
+    | a :: tail -> (aux [@tailcall]) ((a :: group) :: acc) [] tail
   in aux [] [] list
 
 let () =
