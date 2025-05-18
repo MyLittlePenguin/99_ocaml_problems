@@ -14,25 +14,32 @@ let assert_equals (fn: 'a -> string) a b txt =
   let b = fn b in
   assert_fn eq a b (txt ^ ": " ^ a ^ " <> " ^ b)
 
-(* let assert_equals a b msg = assert_fn eq a b msg *)
+let id x = x
 
-let list_to_string list =
+let l_to_string fn list =
   let rec aux acc = function
     | [] -> acc ^ "]"
-    | a :: [] -> acc ^ a ^ "]"
-    | a :: b -> aux (acc ^ a ^ "; ") b
+    | a :: [] -> acc ^ fn a ^ "]"
+    | a :: b -> aux (acc ^ fn a ^ "; ") b
   in aux "[" list
+
+(* list of string to string*)
+let los_to_string list = l_to_string id list
 
 (* list of list of strings *)
 let lolos_to_string list =
-  list |> (List.map list_to_string) |> list_to_string
+  list |> (List.map los_to_string) |> los_to_string
 
-(* let assert_optional_equals = function *)
-let assert_optional_equals actual expectation msg =
-  match actual, expectation with
-  | Some a, Some e when a = e -> ()
-  | None, None -> ()
-  | _ -> fail msg
+let o_to_string fn = function
+  | Some x -> "Some " ^ fn x
+  | None -> "None"
+
+(* option of string *)
+let oos_to_string = o_to_string id
+
+(* list of options of string *)
+let looos_to_string list =
+  list |> (List.map oos_to_string) |> los_to_string
 
 (* 1. *)
 let rec last = function
@@ -113,24 +120,41 @@ let pack list =
     | a :: tail -> (aux [@tailcall]) ((a :: group) :: acc) [] tail
   in aux [] [] list
 
+(* 10. *)
+let encode list =
+  let rec aux acc counter = function
+    | [] -> []
+    | [a] -> (counter, a) :: acc
+    | a :: (b :: _ as tail) when a = b -> (aux [@tailcall]) acc (counter + 1) tail
+    | a :: (b :: _ as tail) -> (aux [@tailcall]) ((counter, a) :: acc) 1 tail
+  in aux [] 1 list |> rev
+
 let () =
-  assert_optional_equals (last ["a" ; "b" ; "c" ; "d"]) (Some "d") "should have been d";
-  assert_optional_equals (last []) (None) "should have been d";
-  assert_optional_equals (last_two ["a"; "b"; "c"; "d"]) (Some ("c", "d")) "should have been (c, d)";
-  assert_optional_equals (last_two ["a"]) (None) "should have been (c, d)";
-  assert_optional_equals (at 2 ["a"; "b"; "c"; "d"; "e"]) (Some "c") "should have been c";
-  assert_optional_equals (at 2 ["a"]) (None) "should have been None";
+  assert_equals oos_to_string (last ["a" ; "b" ; "c" ; "d"]) (Some "d") "last";
+  assert_equals oos_to_string (last []) (None) "last";
+  assert_equals
+    (o_to_string (fun (a, b) -> "("^a^","^b^")"))
+    (last_two ["a"; "b"; "c"; "d"])
+    (Some ("c", "d"))
+    "last_two";
+  assert_equals
+    (o_to_string (fun (a, b) -> "("^a^","^b^")"))
+    (last_two ["a"])
+    (None)
+    "last_two";
+  assert_equals oos_to_string (at 2 ["a"; "b"; "c"; "d"; "e"]) (Some "c") "at";
+  assert_equals oos_to_string (at 2 ["a"]) (None) "at";
   (* assert_equals (length ["a"; "b"; "c"]) 3 "should have been 3"; *)
   assert_equals Int.to_string (length ["a"; "b"; "c"]) 3 "length";
   assert_equals Int.to_string (length []) 0 "length";
-  assert_equals list_to_string (rev ["a"; "b"; "c"]) ["c"; "b"; "a"] "rev";
+  assert_equals los_to_string (rev ["a"; "b"; "c"]) ["c"; "b"; "a"] "rev";
   assert_equals Bool.to_string (is_palindrome ["x"; "a"; "m"; "a"; "x"]) true "is_palindrome";
   assert_equals Bool.to_string (is_palindrome ["a"; "b"]) false "is_palindrome";
-  assert_equals list_to_string
+  assert_equals los_to_string
     (flatten [One "a"; Many [One "b"; Many [One "c" ;One "d"]; One "e"]])
     ["a"; "b"; "c"; "d"; "e"]
     "flatten";
-  assert_equals list_to_string
+  assert_equals los_to_string
     (compress ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"])
     ["a"; "b"; "c"; "a"; "d"; "e"]
     "compress";
@@ -139,4 +163,9 @@ let () =
     [["a"; "a"; "a"; "a"]; ["b"]; ["c"; "c"]; ["a"; "a"]; ["d"; "d"]; ["e"; "e"; "e"; "e"]]
     "compress";
     (* "not packed correctly"; *)
+  assert_equals
+    (l_to_string (fun (a, b) -> "("^(Int.to_string a)^","^b^")"))
+    (encode ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"])
+    [(4, "a"); (1, "b"); (2, "c"); (2, "a"); (1, "d"); (4, "e")]
+    "encode";
   print_endline "success =)"
