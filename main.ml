@@ -94,14 +94,14 @@ let is_palindrome list =
 
 (* 7. *)
 type 'a node =
-  | One of 'a
-  | Many of 'a node list
+  | TOne of 'a
+  | TMany of 'a node list
 
 let flatten tree =
   let rec aux acc = function
     | [] -> acc
-    | One hd :: tail ->  (aux [@tailcall]) (hd :: acc) tail
-    | Many hd :: tail -> (aux [@tailcall]) (aux acc hd) tail
+    | TOne hd :: tail ->  (aux [@tailcall]) (hd :: acc) tail
+    | TMany hd :: tail -> (aux [@tailcall]) (aux acc hd) tail
   in aux [] tree |> rev
 
 (* 8. *)
@@ -130,6 +130,43 @@ let encode list =
     | a :: (b :: _ as tail) -> (aux [@tailcall]) ((counter, a) :: acc) 1 tail
   in aux [] 1 list |> rev
 
+(* 11. && 13. *)
+type 'a rle =
+  | One of 'a
+  | Many of int * 'a
+
+let encode_2 list =
+  let to_entry value = function
+    | 1 -> One value
+    | counter -> Many (counter, value)
+  in
+  let rec aux acc counter = function
+    | [] -> []
+    | [a] -> to_entry a counter :: acc
+    | a :: (b :: _ as tail) when a = b -> (aux [@tailcall]) acc (counter + 1) tail
+    | a :: (b :: _ as tail) -> (aux [@tailcall]) (to_entry a counter :: acc) 1 tail
+  in aux [] 1 list |> rev
+
+let encode_2_to_string list = 
+  let entry_to_string it = match it with
+    | One x -> "One " ^ x
+    | Many (i, x) -> "Many (" ^ Int.to_string i ^ ", " ^ x ^ ")"
+  in
+  list |> (List.map entry_to_string) |> los_to_string
+
+(* 12. *)
+let decode list =
+  let rec expand acc = function
+    | One x -> x :: acc
+    | Many (i, x) when i = 1 -> x :: acc
+    | Many (i, x) -> expand (x :: acc) (Many (i - 1, x))
+  in
+  let rec aux acc = function
+    | [] -> []
+    | [x] -> expand acc x
+    | hd :: tl -> aux (expand acc hd) tl
+  in aux [] list |> rev
+
 let () =
   assert_equals oos_to_string (last ["a" ; "b" ; "c" ; "d"]) (Some "d") "last";
   assert_equals oos_to_string (last []) (None) "last";
@@ -151,7 +188,7 @@ let () =
   assert_equals Bool.to_string (is_palindrome ["x"; "a"; "m"; "a"; "x"]) true "is_palindrome";
   assert_equals Bool.to_string (is_palindrome ["a"; "b"]) false "is_palindrome";
   assert_equals los_to_string
-    (flatten [One "a"; Many [One "b"; Many [One "c" ;One "d"]; One "e"]])
+    (flatten [TOne "a"; TMany [TOne "b"; TMany [TOne "c" ;TOne "d"]; TOne "e"]])
     ["a"; "b"; "c"; "d"; "e"]
     "flatten";
   assert_equals los_to_string
@@ -167,4 +204,12 @@ let () =
     (encode ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"])
     [(4, "a"); (1, "b"); (2, "c"); (2, "a"); (1, "d"); (4, "e")]
     "encode";
+  assert_equals encode_2_to_string
+    (encode_2 ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"])
+    [Many (4, "a"); One "b"; Many (2, "c"); Many (2, "a"); One "d"; Many (4, "e")]
+    "encode_2";
+  assert_equals los_to_string
+    (decode [Many (4, "a"); One "b"; Many (2, "c"); Many (2, "a"); One "d"; Many (4, "e")])
+    ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"]
+    "decode";
   print_endline "success =)"
