@@ -117,4 +117,12 @@ let tests () =
   assert_equals los_to_string
     (slice [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j" ] 2 6)
     [ "c"; "d"; "e"; "f"; "g" ]
-    "slice"
+    "slice";
+  assert_equals los_to_string
+    (rotate ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"] 3)
+    [ "d"; "e"; "f"; "g"; "h"; "a"; "b"; "c" ]
+    "rotate 3";
+  assert_equals los_to_string
+    (rotate [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h" ] 11)
+    [ "d"; "e"; "f"; "g"; "h"; "a"; "b"; "c" ]
+    "rotate 11"

@@ -182,3 +182,10 @@ let slice list start stop =
     | hd :: tail -> aux (hd :: acc) (i + 1) tail
   in
   aux [] 0 list |> rev
+
+(* 19. *)
+let rotate list places =
+  let len = length list in
+  let n = if places <= 0 then 0 else places mod len in
+  let tail, head = split list n in
+  head @ tail
