@@ -1,0 +1,3 @@
+(library
+ (name tests)
+ (libraries o_my_problems))
