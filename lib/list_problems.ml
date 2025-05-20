@@ -166,9 +166,19 @@ let drop list nth =
 (* 17. *)
 let split list len =
   let rec aux acc i list =
-    match acc, list with
+    match (acc, list) with
     | acc, [] -> acc
     | (fst, snd), hd :: tail when i <= len -> aux (hd :: fst, snd) (i + 1) tail
     | (fst, snd), hd :: tail -> aux (fst, hd :: snd) (i + 1) tail
   in
-  aux ([], []) 1 list |> (fun (f, s) -> (rev f, rev s))
+  aux ([], []) 1 list |> fun (f, s) -> (rev f, rev s)
+
+(* 18. *)
+let slice list start stop =
+  let rec aux acc i = function
+    | [] -> acc
+    | _ when i > stop -> acc
+    | _ :: tail when i < start -> aux acc (i + 1) tail
+    | hd :: tail -> aux (hd :: acc) (i + 1) tail
+  in
+  aux [] 0 list |> rev

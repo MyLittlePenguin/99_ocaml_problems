@@ -37,7 +37,23 @@ let tests () =
     "compress";
   assert_equals lolos_to_string
     (pack
-       [ "a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "d"; "e"; "e"; "e"; "e"; ])
+       [
+         "a";
+         "a";
+         "a";
+         "a";
+         "b";
+         "c";
+         "c";
+         "a";
+         "a";
+         "d";
+         "d";
+         "e";
+         "e";
+         "e";
+         "e";
+       ])
     [
       [ "a"; "a"; "a"; "a" ];
       [ "b" ];
@@ -89,13 +105,16 @@ let tests () =
     (drop [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j" ] 3)
     [ "a"; "b"; "d"; "e"; "g"; "h"; "j" ]
     "drop";
-  let to_str (f, s) = "("^ los_to_string f ^ ", " ^ los_to_string s ^ ")"
-  in
+  let to_str (f, s) = "(" ^ los_to_string f ^ ", " ^ los_to_string s ^ ")" in
   assert_equals to_str
-    (split ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"] 3)
-    (["a"; "b"; "c"], ["d"; "e"; "f"; "g"; "h"; "i"; "j"])
+    (split [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j" ] 3)
+    ([ "a"; "b"; "c" ], [ "d"; "e"; "f"; "g"; "h"; "i"; "j" ])
     "split somewhere in the middle";
   assert_equals to_str
-    (split ["a"; "b"; "c"; "d"] 5)
-    (["a"; "b"; "c"; "d"], [])
+    (split [ "a"; "b"; "c"; "d" ] 5)
+    ([ "a"; "b"; "c"; "d" ], [])
     "split after the list";
+  assert_equals los_to_string
+    (slice [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j" ] 2 6)
+    [ "c"; "d"; "e"; "f"; "g" ]
+    "slice"
