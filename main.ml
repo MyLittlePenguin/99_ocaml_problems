@@ -1,51 +1,10 @@
-exception AssertionFailure of string
-
-let fail msg = raise @@ AssertionFailure msg
-
-let eq a b = a = b
-
-let assert_fn (fn: 'a -> 'b -> bool ) a b msg =
-  if fn a b
-  then ()
-  else fail msg
-
-let assert_equals (fn: 'a -> string) a b txt =
-  let a = fn a in
-  let b = fn b in
-  assert_fn eq a b (txt ^ ": " ^ a ^ " <> " ^ b)
-
-let id x = x
-
-let l_to_string fn list =
-  let rec aux acc = function
-    | [] -> acc ^ "]"
-    | a :: [] -> acc ^ fn a ^ "]"
-    | a :: b -> aux (acc ^ fn a ^ "; ") b
-  in aux "[" list
-
-(* list of string to string*)
-let los_to_string list = l_to_string id list
-
-(* list of list of strings *)
-let lolos_to_string list =
-  list |> (List.map los_to_string) |> los_to_string
-
-let o_to_string fn = function
-  | Some x -> "Some " ^ fn x
-  | None -> "None"
-
-(* option of string *)
-let oos_to_string = o_to_string id
-
-(* list of options of string *)
-let looos_to_string list =
-  list |> (List.map oos_to_string) |> los_to_string
+open Test
 
 (* 1. *)
 let rec last = function
   | [] -> None
   | [head] -> Some head
-  | head :: tail -> (last [@tailcall]) tail
+  | _ :: tail -> (last [@tailcall]) tail
 
 (* 2. *)
 let rec last_two = function
@@ -56,14 +15,14 @@ let rec last_two = function
 (* 3. *)
 let rec at i list =
   match i, list with
-  | i, [] -> None
+  | _, [] -> None
   | i, head :: tail -> if i > 0 then (at [@tailcall]) (i - 1) tail else Some head
 
 (* 4. *)
 let length list =
   let rec aux l i = match l, i with
   | [], i -> i
-  | a :: b, i -> (aux [@tailcall]) b (i + 1)
+  | _ :: b, i -> (aux [@tailcall]) b (i + 1)
   in aux list 0
 
 (* 5. *)
@@ -108,7 +67,7 @@ let flatten tree =
 let rec compress list =
   match list with
   | a :: (b :: _ as tail) when a = b -> compress tail
-  | a :: (b :: _ as tail) -> a :: (compress tail)
+  | a :: (_ :: _ as tail) -> a :: (compress tail)
   | a :: [] -> [a]
   | [] -> []
 
@@ -127,7 +86,7 @@ let encode list =
     | [] -> []
     | [a] -> (counter, a) :: acc
     | a :: (b :: _ as tail) when a = b -> (aux [@tailcall]) acc (counter + 1) tail
-    | a :: (b :: _ as tail) -> (aux [@tailcall]) ((counter, a) :: acc) 1 tail
+    | a :: (_ :: _ as tail) -> (aux [@tailcall]) ((counter, a) :: acc) 1 tail
   in aux [] 1 list |> rev
 
 (* 11. && 13. *)
@@ -144,10 +103,10 @@ let encode_2 list =
     | [] -> []
     | [a] -> to_entry a counter :: acc
     | a :: (b :: _ as tail) when a = b -> (aux [@tailcall]) acc (counter + 1) tail
-    | a :: (b :: _ as tail) -> (aux [@tailcall]) (to_entry a counter :: acc) 1 tail
+    | a :: (_ :: _ as tail) -> (aux [@tailcall]) (to_entry a counter :: acc) 1 tail
   in aux [] 1 list |> rev
 
-let encode_2_to_string list = 
+let encode_2_to_string list =
   let entry_to_string it = match it with
     | One x -> "One " ^ x
     | Many (i, x) -> "Many (" ^ Int.to_string i ^ ", " ^ x ^ ")"
@@ -165,6 +124,24 @@ let decode list =
     | [] -> []
     | [x] -> expand acc x
     | hd :: tl -> aux (expand acc hd) tl
+  in aux [] list |> rev
+
+(* 14. *)
+let duplicate list =
+  let rec aux acc = function
+    | [] -> acc
+    | a :: tail -> aux (a :: a :: acc) tail
+  in aux [] list |> rev
+
+(* 15. *)
+let replicate list count =
+  let rec repeat acc value = function
+    | 0 -> acc
+    | i -> repeat (value :: acc) value (i - 1)
+  in
+  let rec aux acc = function
+    | [] -> acc
+    | a :: tail -> aux (repeat acc a count) tail
   in aux [] list |> rev
 
 let () =
@@ -212,4 +189,14 @@ let () =
     (decode [Many (4, "a"); One "b"; Many (2, "c"); Many (2, "a"); One "d"; Many (4, "e")])
     ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"]
     "decode";
+  assert_equals
+    los_to_string
+    (duplicate ["a"; "b"; "c"; "c"; "d"])
+    ["a"; "a"; "b"; "b"; "c"; "c"; "c"; "c"; "d"; "d"]
+    "duplicate";
+  assert_equals
+    los_to_string
+    (replicate ["a"; "b"; "c"] 3)
+    ["a"; "a"; "a"; "b"; "b"; "b"; "c"; "c"; "c"]
+    "replicate";
   print_endline "success =)"
