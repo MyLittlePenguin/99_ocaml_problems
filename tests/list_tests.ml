@@ -125,4 +125,8 @@ let tests () =
   assert_equals los_to_string
     (rotate [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h" ] 11)
     [ "d"; "e"; "f"; "g"; "h"; "a"; "b"; "c" ]
-    "rotate 11"
+    "rotate 11";
+  assert_equals los_to_string
+    (remove_at 1 ["a"; "b"; "c"; "d"])
+    ["a"; "c"; "d"]
+    "remove_at";

@@ -189,3 +189,12 @@ let rotate list places =
   let n = if places <= 0 then 0 else places mod len in
   let tail, head = split list n in
   head @ tail
+
+(* 20. *)
+let remove_at n list =
+  let rec aux acc i = function
+    | [] -> acc |> rev
+    | hd :: tl when i > 0 -> aux (hd :: acc) (i - 1) tl
+    | _ :: tl -> rev acc @ tl
+  in
+  aux [] n list
