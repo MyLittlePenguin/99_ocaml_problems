@@ -119,7 +119,7 @@ let tests () =
     [ "c"; "d"; "e"; "f"; "g" ]
     "slice";
   assert_equals los_to_string
-    (rotate ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"] 3)
+    (rotate [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h" ] 3)
     [ "d"; "e"; "f"; "g"; "h"; "a"; "b"; "c" ]
     "rotate 3";
   assert_equals los_to_string
@@ -127,6 +127,10 @@ let tests () =
     [ "d"; "e"; "f"; "g"; "h"; "a"; "b"; "c" ]
     "rotate 11";
   assert_equals los_to_string
-    (remove_at 1 ["a"; "b"; "c"; "d"])
-    ["a"; "c"; "d"]
-    "remove_at";
+    (remove_at 1 [ "a"; "b"; "c"; "d" ])
+    [ "a"; "c"; "d" ] "remove_at";
+  assert_equals los_to_string
+    (insert_at "alfa" 1 [ "a"; "b"; "c"; "d" ])
+    [ "a"; "alfa"; "b"; "c"; "d" ]
+    "insert at";
+  assert_equals loi_to_string (range 4 9) [ 4; 5; 6; 7; 8; 9 ] "range"

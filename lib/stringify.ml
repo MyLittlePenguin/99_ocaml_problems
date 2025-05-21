@@ -11,6 +11,8 @@ let l_to_string fn list =
 (* list of string to string*)
 let los_to_string list = l_to_string id list
 
+let loi_to_string list = l_to_string Int.to_string list
+
 (* list of list of strings *)
 let lolos_to_string list = list |> List.map los_to_string |> los_to_string
 let o_to_string fn = function Some x -> "Some " ^ fn x | None -> "None"

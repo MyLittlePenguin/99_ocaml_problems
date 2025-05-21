@@ -198,3 +198,20 @@ let remove_at n list =
     | _ :: tl -> rev acc @ tl
   in
   aux [] n list
+
+(* 21. *)
+let insert_at value n list =
+  let rec aux acc n = function
+    | rest when n <= 0 -> rev acc @ (value :: rest)
+    | hd :: tl -> aux (hd :: acc) (n - 1) tl
+    | [] -> [ value ]
+  in
+  aux [] n list
+
+(* 22. *)
+let range start stop =
+  let rec aux acc = function
+    | i when i <= stop -> aux (i :: acc) (i + 1)
+    | _ -> acc |> rev
+  in
+  aux [] start
