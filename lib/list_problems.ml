@@ -232,3 +232,7 @@ let rand_select list n =
         aux (it :: acc) rest (i - 1)
   in
   aux [] list n
+
+(* 24. *)
+let lotto_select n max =
+  rand_select (range 1 max) n

@@ -135,6 +135,7 @@ let tests () =
     "insert at";
   assert_equals loi_to_string (range 4 9) [ 4; 5; 6; 7; 8; 9 ] "range";
   assert_equals los_to_string
-    (rand_select ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"] 3)
-    ["e"; "c"; "g"]
-    "rand_select";
+    (rand_select [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h" ] 3)
+    [ "e"; "c"; "g" ] "rand_select";
+  assert_equals loi_to_string (lotto_select 6 49) [21; 8; 28; 4; 34; 29]
+    "lotto_select"
