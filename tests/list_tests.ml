@@ -133,4 +133,8 @@ let tests () =
     (insert_at "alfa" 1 [ "a"; "b"; "c"; "d" ])
     [ "a"; "alfa"; "b"; "c"; "d" ]
     "insert at";
-  assert_equals loi_to_string (range 4 9) [ 4; 5; 6; 7; 8; 9 ] "range"
+  assert_equals loi_to_string (range 4 9) [ 4; 5; 6; 7; 8; 9 ] "range";
+  assert_equals los_to_string
+    (rand_select ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"] 3)
+    ["e"; "c"; "g"]
+    "rand_select";
