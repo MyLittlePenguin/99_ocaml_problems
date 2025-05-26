@@ -253,3 +253,10 @@ let permutation list =
         aux (it :: acc) rest (i - 1)
   in
   aux [] list (length list)
+
+(* 26. *)
+let rec extract k = function
+    | [] -> []
+    | _ when k < 1 -> [[]]
+    | ls when k = 1 -> List.map (fun it -> [it]) ls
+    | hd :: tl -> List.map (fun it -> hd :: it) (extract (k - 1) tl) @ extract k tl
