@@ -138,4 +138,11 @@ let tests () =
     (rand_select [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h" ] 3)
     [ "e"; "c"; "g" ] "rand_select";
   assert_equals loi_to_string (lotto_select 6 49) [21; 8; 28; 4; 34; 29]
-    "lotto_select"
+  (* should have been [20 28; 45; 16; 24; 38] according to the ocaml exercises page but even the *)
+  (* solution of the page spits out the same result as my solution *)
+  "lotto_select";
+  assert_equals los_to_string
+    (permutation ["a"; "b"; "c"; "d"; "e"; "f"])
+    (* ["c"; "d"; "f"; "e"; "b"; "a"] *)
+    ["c"; "b"; "f"; "e"; "d"; "a"]
+    "permutation";

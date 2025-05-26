@@ -236,3 +236,20 @@ let rand_select list n =
 (* 24. *)
 let lotto_select n max =
   rand_select (range 1 max) n
+
+(* 25. *)
+let permutation list =
+  (* length list |> rand_select list *)
+  let rec select acc i = function
+    | [] -> raise Not_found
+    | hd :: tail when i > 0 -> select (hd :: acc) (i - 1) tail
+    | hd :: tail -> (hd, acc @ tail)
+  in
+  let select_rand list = select [] (list |> length |> Random.int) list in
+  let rec aux acc rest = function
+    | 0 -> acc
+    | i ->
+        let it, rest = select_rand rest in
+        aux (it :: acc) rest (i - 1)
+  in
+  aux [] list (length list)
