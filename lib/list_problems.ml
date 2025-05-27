@@ -234,8 +234,7 @@ let rand_select list n =
   aux [] list n
 
 (* 24. *)
-let lotto_select n max =
-  rand_select (range 1 max) n
+let lotto_select n max = rand_select (range 1 max) n
 
 (* 25. *)
 let permutation list =
@@ -256,7 +255,8 @@ let permutation list =
 
 (* 26. *)
 let rec extract k = function
-    | [] -> []
-    | _ when k < 1 -> [[]]
-    | ls when k = 1 -> List.map (fun it -> [it]) ls
-    | hd :: tl -> List.map (fun it -> hd :: it) (extract (k - 1) tl) @ extract k tl
+  | [] -> []
+  | _ when k < 1 -> [ [] ]
+  | ls when k = 1 -> List.map (fun it -> [ it ]) ls
+  | hd :: tl ->
+      List.map (fun it -> hd :: it) (extract (k - 1) tl) @ extract k tl

@@ -137,28 +137,36 @@ let tests () =
   assert_equals los_to_string
     (rand_select [ "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h" ] 3)
     [ "e"; "c"; "g" ] "rand_select";
-  assert_equals loi_to_string (lotto_select 6 49) [21; 8; 28; 4; 34; 29]
-  (* should have been [20 28; 45; 16; 24; 38] according to the ocaml exercises page but even the *)
-  (* solution of the page spits out the same result as my solution *)
-  "lotto_select";
+  assert_equals loi_to_string (lotto_select 6 49) [ 21; 8; 28; 4; 34; 29 ]
+    (* should have been [20 28; 45; 16; 24; 38] according to the ocaml exercises page but even the *)
+    (* solution of the page spits out the same result as my solution *)
+    "lotto_select";
   assert_equals los_to_string
-    (permutation ["a"; "b"; "c"; "d"; "e"; "f"])
+    (permutation [ "a"; "b"; "c"; "d"; "e"; "f" ])
     (* ["c"; "d"; "f"; "e"; "b"; "a"] *)
-    ["c"; "b"; "f"; "e"; "d"; "a"]
+    [ "c"; "b"; "f"; "e"; "d"; "a" ]
     "permutation";
   assert_equals lolos_to_string
-    (extract 1 ["a"; "b"; "c"; "d"])
-    [["a"]; ["b"]; ["c"]; ["d"]]
+    (extract 1 [ "a"; "b"; "c"; "d" ])
+    [ [ "a" ]; [ "b" ]; [ "c" ]; [ "d" ] ]
     "extract 1";
   assert_equals lolos_to_string
-    (extract 2 ["a"; "b"; "c"; "d"])
-    [["a"; "b"]; ["a"; "c"]; ["a"; "d"]; ["b"; "c"]; ["b"; "d"]; ["c"; "d"]]
+    (extract 2 [ "a"; "b"; "c"; "d" ])
+    [
+      [ "a"; "b" ];
+      [ "a"; "c" ];
+      [ "a"; "d" ];
+      [ "b"; "c" ];
+      [ "b"; "d" ];
+      [ "c"; "d" ];
+    ]
     "extract 2";
   assert_equals lolos_to_string
-    (extract 3 ["a"; "b"; "c"; "d"])
-    [["a"; "b"; "c"]; ["a"; "b"; "d"]; ["a"; "c"; "d"]; ["b"; "c"; "d"]]
+    (extract 3 [ "a"; "b"; "c"; "d" ])
+    [
+      [ "a"; "b"; "c" ]; [ "a"; "b"; "d" ]; [ "a"; "c"; "d" ]; [ "b"; "c"; "d" ];
+    ]
     "extract 3";
   assert_equals lolos_to_string
-    (extract 0 ["a"; "b"; "c"; "d"])
-    [[]]
-    "extract 0";
+    (extract 0 [ "a"; "b"; "c"; "d" ])
+    [ [] ] "extract 0"
