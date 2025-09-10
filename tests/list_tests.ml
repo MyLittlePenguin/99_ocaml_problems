@@ -169,4 +169,9 @@ let tests () =
     "extract 3";
   assert_equals lolos_to_string
     (extract 0 [ "a"; "b"; "c"; "d" ])
-    [ [] ] "extract 0"
+    [ [] ] "extract 0";
+  assert_equals lolos_to_string
+   (length_sort [["a"; "b"; "c"]; ["d"; "e"]; ["f"; "g"; "h"]; ["d"; "e"]; ["i"; "j"; "k"; "l"]; ["m"; "n"]; ["o"]])
+   ([["o"]; ["d"; "e"]; ["d"; "e"]; ["m"; "n"]; ["a"; "b"; "c"]; ["f"; "g"; "h"];
+ ["i"; "j"; "k"; "l"]])
+   "sort list by length";

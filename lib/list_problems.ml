@@ -260,3 +260,27 @@ let rec extract k = function
   | ls when k = 1 -> List.map (fun it -> [ it ]) ls
   | hd :: tl ->
       List.map (fun it -> hd :: it) (extract (k - 1) tl) @ extract k tl
+
+(* 28. 1. *)
+let length_sort list =
+  let counted = List.map (fun it -> (length it, it)) list in
+  let comp a b = if a < b then -1 else if a = b then 0 else 1 in
+  let sorted = List.sort comp counted in
+  List.map (fun (_, a) -> a) sorted
+
+(* 28. 2. *)
+(**
+  * 1. sort by length 
+  * 2. group by length
+  * 3. count group lengths
+  * 4. make int * list list where the tuples contain the sublist and it's length_frequencys
+  * 5. sort by length_frequency
+  *)
+let frequency_sort list =
+  let sorted = length_sort list in
+  (* [(freq, [[], []])] *)
+  let assign_freqencies ls =
+    let aux acc ls = match acc, ls with
+      | hd :: tl when len = length hd -> 
+    in
+  sorted
