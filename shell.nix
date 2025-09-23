@@ -7,5 +7,6 @@ in
       ocaml
       ocamlPackages.ocaml-lsp
       ocamlPackages.ocamlformat
+      ocamlPackages.utop
     ];
   }

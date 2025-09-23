@@ -146,27 +146,27 @@ let tests () =
     (* ["c"; "d"; "f"; "e"; "b"; "a"] *)
     [ "c"; "b"; "f"; "e"; "d"; "a" ]
     "permutation";
-  assert_equals lolos_to_string
-    (extract 1 [ "a"; "b"; "c"; "d" ])
-    [ [ "a" ]; [ "b" ]; [ "c" ]; [ "d" ] ]
-    "extract 1";
-  assert_equals lolos_to_string
-    (extract 2 [ "a"; "b"; "c"; "d" ])
-    [
-      [ "a"; "b" ];
-      [ "a"; "c" ];
-      [ "a"; "d" ];
-      [ "b"; "c" ];
-      [ "b"; "d" ];
-      [ "c"; "d" ];
-    ]
-    "extract 2";
-  assert_equals lolos_to_string
-    (extract 3 [ "a"; "b"; "c"; "d" ])
-    [
-      [ "a"; "b"; "c" ]; [ "a"; "b"; "d" ]; [ "a"; "c"; "d" ]; [ "b"; "c"; "d" ];
-    ]
-    "extract 3";
+  assert (extract 0 [ "a"; "b"; "c"; "d" ] = [ [] ]);
+  assert (
+    extract 1 [ "a"; "b"; "c"; "d" ] = [ [ "a" ]; [ "b" ]; [ "c" ]; [ "d" ] ]);
+  assert (
+    extract 2 [ "a"; "b"; "c"; "d" ]
+    = [
+        [ "a"; "b" ];
+        [ "a"; "c" ];
+        [ "a"; "d" ];
+        [ "b"; "c" ];
+        [ "b"; "d" ];
+        [ "c"; "d" ];
+      ]);
+  assert (
+    extract 3 [ "a"; "b"; "c"; "d" ]
+    = [
+        [ "a"; "b"; "c" ];
+        [ "a"; "b"; "d" ];
+        [ "a"; "c"; "d" ];
+        [ ""; "c"; "d" ];
+    ]);
   assert_equals lolos_to_string
     (extract 0 [ "a"; "b"; "c"; "d" ])
     [ [] ] "extract 0";
